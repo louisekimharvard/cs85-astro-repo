@@ -15,4 +15,4 @@ ax.axhline(3, ls='--', c='gray')
 ax.set(xscale='log', yscale='log', xlabel='Primary mass $m_1$ [$M_\\odot$]',
        ylabel='Secondary mass $m_2$ [$M_\\odot$]', title='The stellar graveyard: every confident LVK merger')
 fig.colorbar(sc, label='Luminosity distance [Mpc]')
-plt.savefig('stellar_graveyard.png', dpi=150, bbox_inches='tight')
+plt.savefig('plots/stellar_graveyard.png', dpi=150, bbox_inches='tight')
