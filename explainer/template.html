@@ -1,0 +1,643 @@
+<title>The Stellar Graveyard</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: long-form scroll. A 680px reading column; each chart breaks out to 980px as a figure with its controls in one row above it. */
+:root {
+  --bg: #f5f6fa; --surface: #ffffff; --ink: #11142a; --ink-2: #4a4f66; --ink-3: #6e7389;
+  --line: #dcdfea; --grid: #eceef4; --accent: #4a3fc4; --accent-soft: #ecebfb;
+  --gap-fill: rgba(110, 100, 190, 0.13); --gap-ink: #5a5390;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a;
+  --spin-neg: #2a78d6; --spin-mid: #c4c3bc; --spin-pos: #e34948;
+  --space: #0b0e1d; --space-ink: #e9eaf4; --space-ink-2: #a9aec9;
+  --display: "Bricolage Grotesque", "Space Grotesk", system-ui, sans-serif;
+  --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0d1020; --surface: #151933; --ink: #e9eaf4; --ink-2: #b4b8cf; --ink-3: #8d92ad;
+  --line: #2b3052; --grid: #20254a; --accent: #a59dff; --accent-soft: #232650;
+  --gap-fill: rgba(165, 157, 255, 0.12); --gap-ink: #b9b3ff;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70;
+  --spin-neg: #3987e5; --spin-mid: #5d6075; --spin-pos: #e66767;
+  color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --bg: #0d1020; --surface: #151933; --ink: #e9eaf4; --ink-2: #b4b8cf; --ink-3: #8d92ad;
+  --line: #2b3052; --grid: #20254a; --accent: #a59dff; --accent-soft: #232650;
+  --gap-fill: rgba(165, 157, 255, 0.12); --gap-ink: #b9b3ff;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70;
+  --spin-neg: #3987e5; --spin-mid: #5d6075; --spin-pos: #e66767;
+  color-scheme: dark;
+}
+
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 64px; }
+main { display: flex; flex-direction: column; gap: 72px; }
+.col { max-width: 680px; width: 100%; margin-inline: auto; }
+.wide { max-width: 980px; width: 100%; margin-inline: auto; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; line-height: 1.12; margin: 0; }
+h1 { font-size: clamp(2.4rem, 7vw, 4.4rem); font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: 1.15rem; font-weight: 500; }
+p { margin: 0; }
+.prose { display: flex; flex-direction: column; gap: 14px; }
+.prose p { color: var(--ink-2); }
+.prose strong { color: var(--ink); font-weight: 600; }
+.eyebrow { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+/* Hero */
+.hero { padding-top: 48px; display: flex; flex-direction: column; gap: 28px; }
+.hero .lede { font-size: 1.2rem; color: var(--ink-2); max-width: 640px; }
+.sky { background: var(--space); color: var(--space-ink); border-radius: 18px; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); }
+.sky canvas { width: 100%; height: 300px; display: block; }
+.sky-text { padding: 28px; display: flex; flex-direction: column; gap: 14px; justify-content: center; border-left: 1px solid #23284a; }
+.sky-text p { color: var(--space-ink-2); font-size: 0.95rem; }
+.sky-text .tag { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: #8f88ff; }
+.sky button { align-self: flex-start; font: 500 0.9rem var(--body); color: var(--space); background: #e9eaf4; border: 0; border-radius: 999px; padding: 9px 16px; cursor: pointer; }
+.sky button:hover { background: #ffffff; }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.stat { display: flex; flex-direction: column; gap: 2px; padding-top: 12px; border-top: 2px solid var(--ink); }
+.stat .big { font-family: var(--display); font-size: clamp(1.8rem, 5vw, 2.6rem); font-weight: 700; font-variant-numeric: tabular-nums; }
+.stat .small { color: var(--ink-2); font-size: 0.9rem; }
+
+/* Size comparison */
+.sizes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.size { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 8px; }
+.size svg { width: 64px; height: 64px; }
+.size .what { font-weight: 600; }
+.size .facts { font-size: 0.9rem; color: var(--ink-2); }
+.size dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; font-size: 0.88rem; }
+.size dt { color: var(--ink-3); }
+.size dd { margin: 0; font-family: var(--mono); font-size: 0.82rem; }
+
+/* Figures */
+figure { margin: 0; display: flex; flex-direction: column; gap: 14px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; font-size: 0.9rem; color: var(--ink-2); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; background: var(--bg); }
+.seg button { font: 500 0.85rem var(--body); color: var(--ink-2); background: transparent; border: 0; border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.check { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.check input { accent-color: var(--accent); width: 16px; height: 16px; }
+.btn { font: 500 0.85rem var(--body); color: var(--bg); background: var(--ink); border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+.search { font: 0.9rem var(--body); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; width: 220px; max-width: 100%; }
+.chart { width: 100%; height: 400px; }
+.readout { font-size: 0.95rem; color: var(--ink-2); min-height: 1.6em; }
+.readout b { color: var(--ink); }
+input[type="range"] { flex: 1 1 240px; accent-color: var(--accent); }
+figcaption { font-size: 0.85rem; color: var(--ink-3); }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; align-items: start; }
+
+/* Callouts and details */
+.gapcards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.gapcard { background: var(--accent-soft); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+.gapcard .range { font-family: var(--mono); font-size: 0.78rem; color: var(--gap-ink); letter-spacing: 0.04em; }
+.gapcard .count { font-family: var(--display); font-size: 1.5rem; font-weight: 700; }
+.gapcard p { font-size: 0.9rem; color: var(--ink-2); }
+.binlist { font-size: 0.9rem; color: var(--ink-2); }
+.binlist .names { font-family: var(--mono); font-size: 0.78rem; color: var(--ink); line-height: 1.8; word-break: break-word; }
+.detail { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; font-size: 0.9rem; }
+.detail .name { font-family: var(--mono); font-weight: 500; font-size: 1rem; }
+.detail .kind { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); }
+.detail .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.detail dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; }
+.detail dt { color: var(--ink-3); }
+.detail dd { margin: 0; font-family: var(--mono); font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+.detail .note { color: var(--ink-2); font-size: 0.85rem; border-top: 1px solid var(--line); padding-top: 8px; }
+.detail.empty { color: var(--ink-3); }
+
+details.term { border-top: 1px solid var(--line); padding-block: 10px; }
+details.term:last-child { border-bottom: 1px solid var(--line); }
+details.term summary { cursor: pointer; font-weight: 600; }
+details.term p { margin-top: 6px; color: var(--ink-2); }
+
+.takeaways { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.takeaways div { border-top: 2px solid var(--accent); padding-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+.takeaways p { color: var(--ink-2); font-size: 0.95rem; }
+footer { font-size: 0.85rem; color: var(--ink-3); display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); padding-top: 18px; }
+
+@media (max-width: 760px) {
+  .sky { grid-template-columns: 1fr; }
+  .sky-text { border-left: 0; border-top: 1px solid #23284a; }
+  .sky canvas { height: 220px; }
+  .sizes, .takeaways, .gapcards { grid-template-columns: 1fr; }
+  .two { grid-template-columns: 1fr; }
+  .chart { height: 340px; }
+  .stats { gap: 10px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<main>
+  <header class="hero col">
+    <span class="eyebrow">LIGO · Virgo · KAGRA, 2015–2025</span>
+    <h1>The Stellar Graveyard</h1>
+    <p class="lede">When very big stars die, they leave behind black holes and neutron stars. Sometimes two of these dead stars orbit each other, spiral closer, and crash together. The crash shakes space itself, and detectors on Earth can feel it. This page uses every confident detection so far to ask: <strong>how heavy are these objects, and are there weights nature seems to skip?</strong></p>
+  </header>
+
+  <section class="wide">
+    <div class="sky">
+      <canvas id="sky" aria-label="Animation of two black holes spiralling together while a wave trace speeds up and grows" role="img"></canvas>
+      <div class="sky-text">
+        <span class="tag">Illustration, not data</span>
+        <h3>A chirp from across the universe</h3>
+        <p>As the two objects spiral inward they orbit faster and faster. The ripples they send out in space (gravitational waves) speed up and get stronger, then stop when the objects merge. Turned into sound, the signal is a short rising "whoop", which astronomers call a chirp.</p>
+        <button type="button" id="chirp">▶ Play a chirp</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="col stats" aria-label="Key numbers">
+    <div class="stat"><span class="big" id="st-events">391</span><span class="small">confident detections</span></div>
+    <div class="stat"><span class="big" id="st-objects">564</span><span class="small">dead stars weighed</span></div>
+    <div class="stat"><span class="big" id="st-far">8.6</span><span class="small">billion years: longest trip a signal made to reach us</span></div>
+  </section>
+
+  <section class="col prose">
+    <span class="eyebrow">The basics</span>
+    <h2>What exactly collided?</h2>
+    <p>Astronomers weigh stars in <strong>solar masses</strong>: one solar mass is the mass of our Sun. Every collision in this catalog involves two of these leftovers:</p>
+  </section>
+
+  <section class="wide sizes">
+    <div class="size">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="26" fill="#f2a93b"/></svg>
+      <span class="what">Our Sun, for scale</span>
+      <dl><dt>Mass</dt><dd>1 solar mass</dd><dt>Width</dt><dd>1.4 million km</dd></dl>
+      <span class="facts">A normal, living star.</span>
+    </div>
+    <div class="size">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="9" fill="var(--s3)"/><circle cx="32" cy="32" r="15" fill="none" stroke="var(--s3)" stroke-opacity="0.35" stroke-width="2"/></svg>
+      <span class="what">Neutron star</span>
+      <dl><dt>Mass</dt><dd>about 1.2–2.3 Suns</dd><dt>Width</dt><dd>about 20 km</dd></dl>
+      <span class="facts">The crushed core of an exploded star. More than our Sun's mass packed into a ball the size of a city.</span>
+    </div>
+    <div class="size">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="24" fill="none" stroke="var(--s1)" stroke-opacity="0.4" stroke-width="3"/><circle cx="32" cy="32" r="18" fill="var(--ink)"/></svg>
+      <span class="what">Black hole</span>
+      <dl><dt>Mass</dt><dd>about 3 to 150+ Suns</dd><dt>Width</dt><dd>~6 km per solar mass</dd></dl>
+      <span class="facts">So dense that not even light escapes. A 30-solar-mass black hole is about 180 km across.</span>
+    </div>
+  </section>
+
+  <section class="col prose">
+    <p>A rough rule: anything lighter than about <strong>3 solar masses</strong> is a neutron star, anything heavier is a black hole. We can't see these objects with telescopes. We work out their masses from the shape of the gravitational-wave signal: heavier pairs produce lower-pitched, shorter chirps.</p>
+  </section>
+
+  <!-- Growth -->
+  <section class="col prose">
+    <span class="eyebrow">Chart 1 · The catalog</span>
+    <h2>From one detection to hundreds</h2>
+    <p>The first gravitational wave was caught on <strong>14 September 2015</strong>. Each time the detectors came back from an upgrade they were more sensitive, so they could hear farther and found collisions faster. Drag the slider or press play to replay ten years of discoveries.</p>
+  </section>
+  <figure class="wide">
+    <div class="panel">
+      <div class="controls">
+        <button type="button" class="btn" id="play">▶ Play</button>
+        <input type="range" id="growth-slider" min="0" max="390" value="390" aria-label="Show detections up to this date">
+      </div>
+      <div class="readout" id="growth-readout" aria-live="polite"></div>
+      <div class="chart" id="chart-growth"></div>
+    </div>
+    <figcaption>Each step up is one detection, plotted by the date its signal arrived. Includes all 391 confident events, including recent ones whose masses aren't published yet.</figcaption>
+  </figure>
+
+  <!-- Histogram -->
+  <section class="col prose">
+    <span class="eyebrow">Chart 2 · The weigh-in</span>
+    <h2>Are there weights nature skips?</h2>
+    <p>Every collision has two objects, so 282 collisions with published masses give us <strong>564 dead stars</strong>. Below, each bar counts how many fall in a mass range. The scale is stretched so that small and huge masses both fit: each step to the right is a bigger jump in mass than the last.</p>
+    <p>Physicists predicted two ranges where objects should be rare. They're shaded in purple. <strong>Tap any bar</strong> to see which collisions are in it.</p>
+  </section>
+  <figure class="wide">
+    <div class="panel">
+      <div class="controls">
+        <label class="check"><input type="checkbox" id="gap-low" checked> Shade the lower mass gap</label>
+        <label class="check"><input type="checkbox" id="gap-pi" checked> Shade the pair-instability gap</label>
+      </div>
+      <div class="chart" id="chart-hist"></div>
+      <div class="binlist" id="binlist" aria-live="polite"></div>
+    </div>
+    <figcaption>Masses are each object's best estimate, in solar masses, measured in the object's own frame.</figcaption>
+  </figure>
+  <section class="wide gapcards">
+    <div class="gapcard">
+      <span class="range">LOWER MASS GAP · 3–5 SOLAR MASSES</span>
+      <span class="count" id="gc-low">1 object</span>
+      <p>The heaviest known neutron stars are about 2–2.5 solar masses, and the lightest black holes in our galaxy are about 5. Almost nothing turns up in between. It's still an open question whether stars just don't make objects this size.</p>
+    </div>
+    <div class="gapcard">
+      <span class="range">PAIR-INSTABILITY GAP · 50–130 SOLAR MASSES</span>
+      <span class="count" id="gc-pi">60 objects</span>
+      <p>Theory says giant stars that would leave black holes this heavy blow themselves apart completely, leaving nothing. Yet LIGO keeps finding black holes here. One idea is that they were built from earlier collisions, like a black hole eating another.</p>
+    </div>
+  </section>
+
+  <!-- Pairs -->
+  <section class="col prose">
+    <span class="eyebrow">Chart 3 · Who collides with whom</span>
+    <h2>Every couple, side by side</h2>
+    <p>Each dot is one collision. Across is the heavier partner, up is the lighter one. That's why the top-left is empty: the lighter partner can never be the heavier one. Most collisions are two black holes of similar size, along the diagonal. The few neutron stars sit along the bottom.</p>
+    <p>Switch to <strong>spin</strong> to colour by how the black holes were spinning. Blue means they spun against their orbit, red means along it, grey means little or no lined-up spin. Tap a dot, or search for an event by name.</p>
+  </section>
+  <figure class="wide">
+    <div class="panel">
+      <div class="controls">
+        <div class="seg" role="group" aria-label="Colour dots by">
+          <button type="button" id="mode-type" aria-pressed="true">Merger type</button>
+          <button type="button" id="mode-spin" aria-pressed="false">Spin</button>
+        </div>
+        <label class="check"><input type="checkbox" id="show-err"> Show uncertainty</label>
+        <input class="search" id="search" list="names" placeholder="Search e.g. GW150914" aria-label="Search for an event by name">
+        <datalist id="names"></datalist>
+      </div>
+      <div class="two">
+        <div class="chart" id="chart-pairs"></div>
+        <div class="detail empty" id="detail-pairs">Tap a dot to see that collision's details.</div>
+      </div>
+    </div>
+    <figcaption>Dashed lines at 3 solar masses: the rough boundary between neutron stars (below/left) and black holes. "Show uncertainty" draws each mass's 90% range: the true value is very likely somewhere on that line.</figcaption>
+  </figure>
+
+  <!-- Final mass vs distance -->
+  <section class="col prose">
+    <span class="eyebrow">Chart 4 · Near and far</span>
+    <h2>Why the heavy ones seem farther away</h2>
+    <p>When two objects merge, they become one. The new object is a little <strong>lighter</strong> than the two added together: about <strong id="lost-median">2.5 solar masses</strong> (around <span id="lost-pct">4%</span>) typically vanishes, turned into the energy of the gravitational waves.</p>
+    <p>Here each dot is that final object, placed by how far away the collision happened. Heavy collisions are "loud" and can be heard from billions of light-years away. Light ones are quiet, so we only hear them when they're close. That's why the bottom right is empty. It shows the limits of our detectors, not a real lack of collisions.</p>
+  </section>
+  <figure class="wide">
+    <div class="panel">
+      <div class="controls">
+        <div class="seg" role="group" aria-label="Measure distance as">
+          <button type="button" id="x-travel" aria-pressed="true">Travel time</button>
+          <button type="button" id="x-dist" aria-pressed="false">Distance (Mpc)</button>
+        </div>
+      </div>
+      <div class="two">
+        <div class="chart" id="chart-final"></div>
+        <div class="detail empty" id="detail-final">Tap a dot to see that collision's details.</div>
+      </div>
+    </div>
+    <figcaption>"Travel time" is how many billion years the waves were travelling before reaching Earth (calculated from each event's redshift with the standard Planck 2018 cosmology). "Distance" is luminosity distance in megaparsecs (1 Mpc ≈ 3.26 million light-years), the distance astronomers infer from how faint the signal is.</figcaption>
+  </figure>
+
+  <section class="col prose">
+    <span class="eyebrow">Glossary</span>
+    <h2>Words on this page</h2>
+    <div>
+      <details class="term"><summary>Gravitational wave</summary><p>A ripple in space itself, predicted by Einstein in 1916. Passing waves stretch and squeeze everything by a tiny amount: LIGO measures changes in its 4 km arms far smaller than a proton.</p></details>
+      <details class="term"><summary>LIGO, Virgo, KAGRA</summary><p>Gravitational-wave detectors in the USA (two LIGO sites), Italy (Virgo) and Japan (KAGRA). They work together, and the catalog is their shared list of detections.</p></details>
+      <details class="term"><summary>Solar mass</summary><p>The mass of our Sun, about 2 × 10<sup>30</sup> kg, or 333,000 Earths.</p></details>
+      <details class="term"><summary>Effective spin</summary><p>One number summarising the two objects' spins: from −1 (spinning fully against the orbit) through 0 to +1 (spinning fully along it). Pairs that formed together tend to spin along their orbit; pairs that met by chance in a crowded star cluster can point any way.</p></details>
+      <details class="term"><summary>Uncertainty</summary><p>Masses come from fitting the signal, which is noisy, so each comes with a range. "34.6 (+4.4 / −2.6)" means the true mass is very likely between 32.0 and 39.0 solar masses.</p></details>
+    </div>
+  </section>
+
+  <section class="col prose">
+    <span class="eyebrow">Summing up</span>
+    <h2>What the graveyard tells us</h2>
+  </section>
+  <section class="col takeaways">
+    <div><h3>Black holes are common</h3><p><span id="tk-bbh">273</span> of 282 weighed collisions were two black holes, most of them 20–40 times our Sun's mass.</p></div>
+    <div><h3>Neutron-star crashes are rare finds</h3><p>Only <span id="tk-ns">9</span> involved a neutron star, partly because they're quiet and only heard nearby.</p></div>
+    <div><h3>One gap looks real</h3><p>Almost nothing sits between 3 and 5 solar masses.</p></div>
+    <div><h3>One gap isn't empty</h3><p>Dozens of black holes sit in the 50–130 range theory said should be bare, though many are within their error ranges of its edge.</p></div>
+  </section>
+
+  <footer class="col">
+    <p><strong>Data:</strong> LIGO-Virgo-KAGRA Gravitational-Wave Transient Catalog (GWTC-1 through GWTC-5.0), from the Gravitational Wave Open Science Center, <a href="https://gwosc.org" target="_blank" rel="noopener">gwosc.org</a>. Event list downloaded from gwosc.org/eventapi/csv/GWTC/. 109 recent events have no published masses yet, so they appear only in Chart 1.</p>
+    <p>Charts drawn from the real catalog values. The animation and chirp sound at the top are illustrations. Made for the CS85 astronomy teaser project.</p>
+  </footer>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<script>
+const EV = __EVENTS__;
+const MASSED = EV.filter(e => e.m1 != null && e.m2 != null);
+const NS_MAX = 3;
+const KIND = {
+  bbh:  { label: 'Black hole + black hole', token: '--s1' },
+  nsbh: { label: 'Black hole + neutron star', token: '--s2' },
+  bns:  { label: 'Neutron star + neutron star', token: '--s3' },
+};
+const kindOf = e => ['bbh', 'nsbh', 'bns'][(e.m1 < NS_MAX) + (e.m2 < NS_MAX)];
+const fmt = (v, d = 1) => v == null ? '–' : v.toLocaleString('en-US', { maximumFractionDigits: d, minimumFractionDigits: d });
+const fmtDate = s => new Date(s + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+const short = n => n.split('_')[0];
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function tok() {
+  const cs = getComputedStyle(document.documentElement);
+  const g = n => cs.getPropertyValue(n).trim();
+  return { bg: g('--bg'), surface: g('--surface'), ink: g('--ink'), ink2: g('--ink-2'), ink3: g('--ink-3'), line: g('--line'),
+    grid: g('--grid'), accent: g('--accent'), gapFill: g('--gap-fill'), gapInk: g('--gap-ink'),
+    s1: g('--s1'), s2: g('--s2'), s3: g('--s3'), neg: g('--spin-neg'), mid: g('--spin-mid'), pos: g('--spin-pos') };
+}
+const kindColor = (k, t) => t[KIND[k].token.replace('--', '')];
+
+const CONFIG = { displayModeBar: false, responsive: true };
+function layout(t, extra) {
+  return Object.assign({
+    paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+    font: { family: 'Inter, system-ui, sans-serif', color: t.ink2, size: 12 },
+    margin: { l: 58, r: 14, t: 14, b: 54 }, showlegend: false, dragmode: false,
+    hoverlabel: { bgcolor: t.surface, bordercolor: t.line, font: { color: t.ink, family: 'Inter, system-ui, sans-serif', size: 13 }, align: 'left' },
+  }, extra);
+}
+function axis(t, title, extra) {
+  return Object.assign({ title: { text: title, font: { color: t.ink2, size: 13 }, standoff: 10 },
+    gridcolor: t.grid, zeroline: false, linecolor: t.line, tickcolor: t.line, ticks: 'outside', ticklen: 4,
+    tickfont: { family: 'JetBrains Mono, ui-monospace, monospace', size: 11, color: t.ink3 }, fixedrange: true }, extra);
+}
+
+const state = { growthIdx: EV.length - 1, gapLow: true, gapPi: true, bin: null, colorMode: 'type', showErr: false, selected: null, xMode: 'travel' };
+
+/* ---------- headline numbers ---------- */
+const objects = MASSED.flatMap(e => [e.m1, e.m2]);
+document.getElementById('st-events').textContent = EV.length;
+document.getElementById('st-objects').textContent = objects.length;
+document.getElementById('st-far').textContent = fmt(Math.max(...EV.map(e => e.travel || 0)), 1);
+const nLow = objects.filter(m => m >= 3 && m < 5).length, nPi = objects.filter(m => m >= 50 && m <= 130).length;
+document.getElementById('gc-low').textContent = nLow + (nLow === 1 ? ' object' : ' objects');
+document.getElementById('gc-pi').textContent = nPi + ' objects';
+document.getElementById('tk-bbh').textContent = MASSED.filter(e => kindOf(e) === 'bbh').length;
+document.getElementById('tk-ns').textContent = MASSED.filter(e => kindOf(e) !== 'bbh').length;
+const withFinal = MASSED.filter(e => e.mf != null);
+const median = a => { const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+document.getElementById('lost-median').textContent = fmt(median(withFinal.map(e => e.m1 + e.m2 - e.mf)), 1) + ' solar masses';
+document.getElementById('lost-pct').textContent = fmt(100 * median(withFinal.map(e => (e.m1 + e.m2 - e.mf) / (e.m1 + e.m2))), 1) + '%';
+document.getElementById('names').innerHTML = MASSED.map(e => `<option value="${e.name}">`).join('');
+
+/* ---------- chart 1: growth ---------- */
+function drawGrowth() {
+  const t = tok(), i = state.growthIdx;
+  const dates = EV.map(e => e.date), counts = EV.map((_, k) => k + 1);
+  const upto = EV.slice(0, i + 1);
+  const traces = [
+    { x: dates, y: counts, mode: 'lines', line: { shape: 'hv', color: t.line, width: 2 }, hoverinfo: 'skip' },
+    { x: upto.map(e => e.date), y: upto.map((_, k) => k + 1), mode: 'lines', line: { shape: 'hv', color: t.s1, width: 2.5 },
+      customdata: upto.map(e => [e.name, fmtDate(e.date)]),
+      hovertemplate: '<b>%{customdata[0]}</b><br>%{customdata[1]}<br>Detection number %{y}<extra></extra>' },
+    { x: [EV[i].date], y: [i + 1], mode: 'markers', marker: { size: 10, color: t.s1, line: { color: t.surface, width: 2 } }, hoverinfo: 'skip' },
+  ];
+  const note = (x, y, text, ax, ay) => ({ x, y, text, showarrow: true, arrowcolor: t.ink3, arrowwidth: 1, ax, ay,
+    font: { size: 11, color: t.ink2 }, align: 'left', bgcolor: t.surface });
+  Plotly.react('chart-growth', traces, layout(t, {
+    xaxis: axis(t, 'Date the signal arrived', { type: 'date', range: ['2015-06-01', '2025-06-01'] }),
+    yaxis: axis(t, 'Total detections so far', { range: [0, 410], rangemode: 'tozero' }),
+    annotations: [
+      note('2015-09-14', 1, 'First detection<br>GW150914', 20, -60),
+      note('2017-08-17', 11, 'First neutron star<br>collision, GW170817', 10, -70),
+      { x: '2021-10-01', y: 90, yshift: 18, text: 'Detectors offline for upgrades', showarrow: false, font: { size: 11, color: t.ink3 } },
+    ],
+  }), CONFIG);
+  const e = EV[i];
+  document.getElementById('growth-readout').innerHTML =
+    `By <b>${fmtDate(e.date)}</b>: <b class="num">${i + 1}</b> detection${i ? 's' : ''}. Latest: <span class="num">${short(e.name)}</span>`;
+}
+const slider = document.getElementById('growth-slider');
+slider.max = EV.length - 1; slider.value = EV.length - 1;
+slider.addEventListener('input', () => { state.growthIdx = +slider.value; drawGrowth(); });
+let playing = null;
+document.getElementById('play').addEventListener('click', () => {
+  const btn = document.getElementById('play');
+  if (playing) { cancelAnimationFrame(playing); playing = null; btn.textContent = '▶ Play'; return; }
+  if (reduceMotion) { state.growthIdx = EV.length - 1; slider.value = state.growthIdx; drawGrowth(); return; }
+  btn.textContent = '❚❚ Pause';
+  if (state.growthIdx >= EV.length - 1) state.growthIdx = 0;
+  const start = performance.now(), from = state.growthIdx, dur = 7000 * (1 - from / EV.length);
+  const step = now => {
+    const f = Math.min(1, (now - start) / dur);
+    state.growthIdx = Math.round(from + f * (EV.length - 1 - from)); slider.value = state.growthIdx; drawGrowth();
+    if (f < 1) playing = requestAnimationFrame(step); else { playing = null; btn.textContent = '▶ Play'; }
+  };
+  playing = requestAnimationFrame(step);
+});
+
+/* ---------- chart 2: histogram ---------- */
+const NB = 40, LO = 0, HI = Math.log10(200), BW = (HI - LO) / NB;
+const bins = Array.from({ length: NB }, (_, k) => ({ a: LO + k * BW, items: [] }));
+MASSED.forEach(e => [['heavier', e.m1], ['lighter', e.m2]].forEach(([role, m]) => {
+  const k = Math.floor((Math.log10(m) - LO) / BW); if (k >= 0 && k < NB) bins[k].items.push({ name: e.name, m, role });
+}));
+state.bin = bins.findIndex(b => b.items.some(o => o.m >= 3 && o.m < 5));
+const TICKS = [1, 2, 3, 5, 10, 20, 50, 100, 200];
+function drawHist() {
+  const t = tok();
+  const x = bins.map(b => b.a + BW / 2), y = bins.map(b => b.items.length);
+  const range = b => `${fmt(10 ** b.a, 1)}–${fmt(10 ** (b.a + BW), 1)}`;
+  const shapes = [];
+  const band = (a, b) => ({ type: 'rect', xref: 'x', yref: 'paper', x0: Math.log10(a), x1: Math.log10(b), y0: 0, y1: 1, fillcolor: t.gapFill, line: { width: 0 }, layer: 'below' });
+  const ann = [];
+  if (state.gapLow) { shapes.push(band(3, 5)); ann.push({ x: Math.log10(Math.sqrt(15)), y: 1, yref: 'paper', yanchor: 'top', text: 'lower<br>gap', showarrow: false, font: { size: 11, color: t.gapInk } }); }
+  if (state.gapPi) { shapes.push(band(50, 130)); ann.push({ x: Math.log10(Math.sqrt(6500)), y: 1, yref: 'paper', yanchor: 'top', text: 'pair-instability<br>gap', showarrow: false, font: { size: 11, color: t.gapInk } }); }
+  const colors = bins.map((_, k) => k === state.bin ? t.ink : t.s1);
+  Plotly.react('chart-hist', [{
+    type: 'bar', x, y, width: BW * 0.88, marker: { color: colors },
+    customdata: bins.map(range), hovertemplate: '<b>%{customdata} solar masses</b><br>%{y} objects<extra></extra>',
+  }], layout(t, {
+    xaxis: axis(t, 'Mass of each object (solar masses)', { range: [LO, HI], tickvals: TICKS.map(Math.log10), ticktext: TICKS.map(String), showgrid: false }),
+    yaxis: axis(t, 'Number of objects', { rangemode: 'tozero' }), shapes, annotations: ann, bargap: 0,
+  }), CONFIG);
+  const b = bins[state.bin], el = document.getElementById('binlist');
+  if (!b || !b.items.length) { el.innerHTML = 'Tap a bar to list the collisions in it.'; return; }
+  const list = [...b.items].sort((p, q) => p.m - q.m);
+  el.innerHTML = `<b>${list.length} object${list.length > 1 ? 's' : ''} between ${range(b)} solar masses</b>${state.bin === bins.findIndex(bb => bb.items.some(o => o.m >= 3 && o.m < 5)) ? ', the bar inside the lower gap' : ''}:
+    <div class="names">${list.map(o => `${short(o.name)} (${o.role} partner, ${fmt(o.m, 1)})`).join(' · ')}</div>`;
+}
+document.getElementById('gap-low').addEventListener('change', e => { state.gapLow = e.target.checked; drawHist(); });
+document.getElementById('gap-pi').addEventListener('change', e => { state.gapPi = e.target.checked; drawHist(); });
+
+/* ---------- shared details card ---------- */
+function detailHTML(e) {
+  const t = tok(), k = kindOf(e);
+  const range = (v, lo, hi) => `${fmt(v)} <span style="color:var(--ink-3)">(${hi != null ? '+' + fmt(hi) : ''} / ${lo != null ? fmt(lo) : ''})</span>`;
+  const notes = [];
+  if (e.m1 > 50 && e.m1 < 130) notes.push('The heavier black hole sits inside the pair-instability gap.');
+  if ((e.m1 >= 3 && e.m1 < 5) || (e.m2 >= 3 && e.m2 < 5)) notes.push('One object sits inside the lower mass gap: too heavy for a typical neutron star, too light for a typical black hole.');
+  if (e.name === 'GW150914') notes.push('The first gravitational wave ever detected.');
+  if (e.name === 'GW170817') notes.push('Also seen as a flash of light by telescopes: the first collision seen in both waves and light.');
+  return `<span class="name">${short(e.name)}</span>
+    <span class="kind"><span class="dot" style="background:${kindColor(k, t)}"></span>${KIND[k].label}</span>
+    <dl>
+      <dt>Detected</dt><dd>${fmtDate(e.date)}</dd>
+      <dt>Heavier</dt><dd>${range(e.m1, e.m1lo, e.m1hi)}</dd>
+      <dt>Lighter</dt><dd>${range(e.m2, e.m2lo, e.m2hi)}</dd>
+      <dt>After merger</dt><dd>${fmt(e.mf)}</dd>
+      <dt>Travel time</dt><dd>${fmt(e.travel, 2)} billion yr</dd>
+      <dt>Distance</dt><dd>${fmt(e.dist, 0)} Mpc</dd>
+      <dt>Spin</dt><dd>${e.chi == null ? '–' : (e.chi > 0 ? '+' : '') + fmt(e.chi, 2)}</dd>
+    </dl>
+    <span style="color:var(--ink-3);font-size:0.8rem">Masses in solar masses, with the 90% range.</span>
+    ${notes.length ? `<div class="note">${notes.join(' ')}</div>` : ''}`;
+}
+function select(name) {
+  const e = MASSED.find(x => x.name === name || short(x.name).toLowerCase() === name.toLowerCase());
+  if (!e) return false;
+  state.selected = e.name;
+  ['detail-pairs', 'detail-final'].forEach(id => { const el = document.getElementById(id); el.classList.remove('empty'); el.innerHTML = detailHTML(e); });
+  drawPairs(); drawFinal();
+  return true;
+}
+function ring(t, x, y) {
+  return { x: [x], y: [y], mode: 'markers', hoverinfo: 'skip', showlegend: false, marker: { size: 20, symbol: 'circle-open', color: t.ink, line: { width: 2.5, color: t.ink } } };
+}
+
+/* ---------- chart 3: pairs ---------- */
+function hoverPairs(arr) {
+  return { customdata: arr.map(e => [short(e.name), fmt(e.m1), fmt(e.m2), KIND[kindOf(e)].label, e.chi == null ? '–' : fmt(e.chi, 2), e.name]),
+    hovertemplate: '<b>%{customdata[0]}</b><br>%{customdata[3]}<br>Heavier: %{customdata[1]} · Lighter: %{customdata[2]}<br>Spin: %{customdata[4]}<extra></extra>' };
+}
+function errs(arr, t, color) {
+  if (!state.showErr) return {};
+  return {
+    error_x: { type: 'data', symmetric: false, array: arr.map(e => e.m1hi || 0), arrayminus: arr.map(e => -(e.m1lo || 0)), color, thickness: 1, width: 0 },
+    error_y: { type: 'data', symmetric: false, array: arr.map(e => e.m2hi || 0), arrayminus: arr.map(e => -(e.m2lo || 0)), color, thickness: 1, width: 0 },
+  };
+}
+function drawPairs() {
+  const t = tok(); let traces;
+  if (state.colorMode === 'type') {
+    traces = ['bbh', 'nsbh', 'bns'].map(k => {
+      const arr = MASSED.filter(e => kindOf(e) === k), c = kindColor(k, t);
+      return Object.assign({ x: arr.map(e => e.m1), y: arr.map(e => e.m2), mode: 'markers', name: KIND[k].label, showlegend: true,
+        marker: { size: 9, color: c, opacity: 0.9, line: { color: t.surface, width: 1 } } }, hoverPairs(arr), errs(arr, t, c));
+    });
+  } else {
+    const arr = MASSED.filter(e => e.chi != null);
+    traces = [Object.assign({ x: arr.map(e => e.m1), y: arr.map(e => e.m2), mode: 'markers', showlegend: false,
+      marker: { size: 9, color: arr.map(e => e.chi), cmin: -0.7, cmax: 0.7, colorscale: [[0, t.neg], [0.5, t.mid], [1, t.pos]],
+        line: { color: t.surface, width: 1 },
+        colorbar: { title: { text: 'Spin', font: { color: t.ink2, size: 12 } }, thickness: 10, len: 0.7, outlinewidth: 0,
+          tickvals: [-0.6, 0, 0.6], ticktext: ['−0.6 against', '0', '+0.6 along'], tickfont: { color: t.ink3, size: 10 } } } },
+      hoverPairs(arr), errs(arr, t, t.line))];
+  }
+  const sel = MASSED.find(e => e.name === state.selected);
+  if (sel) traces.push(ring(t, sel.m1, sel.m2));
+  const ticks = [1, 2, 3, 5, 10, 20, 50, 100, 200];
+  Plotly.react('chart-pairs', traces, layout(t, {
+    showlegend: state.colorMode === 'type',
+    legend: { orientation: 'h', x: 0, y: 1.02, yanchor: 'bottom', font: { size: 11, color: t.ink2 }, itemclick: false, itemdoubleclick: false },
+    margin: { l: 58, r: 14, t: state.colorMode === 'type' ? 40 : 14, b: 54 },
+    xaxis: axis(t, 'Heavier partner (solar masses)', { type: 'log', range: [Math.log10(1.1), Math.log10(200)], tickvals: ticks, ticktext: ticks.map(String) }),
+    yaxis: axis(t, 'Lighter partner (solar masses)', { type: 'log', range: [Math.log10(0.9), Math.log10(160)], tickvals: ticks, ticktext: ticks.map(String) }),
+    shapes: [3].flatMap(v => [
+      { type: 'line', xref: 'x', yref: 'paper', x0: v, x1: v, y0: 0, y1: 1, line: { color: t.ink3, width: 1, dash: 'dash' } },
+      { type: 'line', xref: 'paper', yref: 'y', x0: 0, x1: 1, y0: v, y1: v, line: { color: t.ink3, width: 1, dash: 'dash' } }]),
+  }), CONFIG);
+}
+document.getElementById('mode-type').addEventListener('click', () => setMode('type'));
+document.getElementById('mode-spin').addEventListener('click', () => setMode('spin'));
+function setMode(m) { state.colorMode = m; document.getElementById('mode-type').setAttribute('aria-pressed', m === 'type'); document.getElementById('mode-spin').setAttribute('aria-pressed', m === 'spin'); drawPairs(); }
+document.getElementById('show-err').addEventListener('change', e => { state.showErr = e.target.checked; drawPairs(); });
+const search = document.getElementById('search');
+search.addEventListener('change', () => { if (!select(search.value.trim())) search.setCustomValidity('No event with that name'); else search.setCustomValidity(''); search.reportValidity(); });
+
+/* ---------- chart 4: final mass vs distance ---------- */
+function drawFinal() {
+  const t = tok(), useT = state.xMode === 'travel';
+  const xv = e => useT ? e.travel : e.dist;
+  const traces = ['bbh', 'nsbh', 'bns'].map(k => {
+    const arr = withFinal.filter(e => kindOf(e) === k && xv(e) != null);
+    return { x: arr.map(xv), y: arr.map(e => e.mf), mode: 'markers', name: KIND[k].label, showlegend: true,
+      marker: { size: 9, color: kindColor(k, t), opacity: 0.9, line: { color: t.surface, width: 1 } },
+      customdata: arr.map(e => [short(e.name), fmt(e.mf), fmt(e.travel, 2), fmt(e.dist, 0), e.name]),
+      hovertemplate: '<b>%{customdata[0]}</b><br>Final mass: %{customdata[1]} solar masses<br>Travelled %{customdata[2]} billion years (%{customdata[3]} Mpc)<extra></extra>' };
+  });
+  const sel = withFinal.find(e => e.name === state.selected);
+  if (sel) traces.push(ring(t, xv(sel), sel.mf));
+  const ticks = [2, 5, 10, 20, 50, 100, 200];
+  Plotly.react('chart-final', traces, layout(t, {
+    showlegend: true, legend: { orientation: 'h', x: 0, y: 1.02, yanchor: 'bottom', font: { size: 11, color: t.ink2 }, itemclick: false, itemdoubleclick: false },
+    margin: { l: 58, r: 14, t: 40, b: 54 },
+    xaxis: axis(t, useT ? 'Time the waves travelled to reach Earth (billion years)' : 'Luminosity distance (megaparsecs)', { rangemode: 'tozero' }),
+    yaxis: axis(t, 'Mass after merging (solar masses)', { type: 'log', range: [Math.log10(2), Math.log10(300)], tickvals: ticks, ticktext: ticks.map(String) }),
+    annotations: [{ x: 0.97, y: 0.06, xref: 'paper', yref: 'paper', xanchor: 'right', text: 'Light collisions this far away<br>are too quiet to detect',
+      showarrow: false, font: { size: 11, color: t.ink3 }, align: 'right' }],
+  }), CONFIG);
+}
+function setX(m) { state.xMode = m; document.getElementById('x-travel').setAttribute('aria-pressed', m === 'travel'); document.getElementById('x-dist').setAttribute('aria-pressed', m === 'dist'); drawFinal(); }
+document.getElementById('x-travel').addEventListener('click', () => setX('travel'));
+document.getElementById('x-dist').addEventListener('click', () => setX('dist'));
+
+/* ---------- wiring ---------- */
+function drawAll() { drawGrowth(); drawHist(); drawPairs(); drawFinal(); }
+drawAll();
+document.getElementById('chart-hist').on('plotly_click', d => { state.bin = d.points[0].pointIndex; drawHist(); });
+['chart-pairs', 'chart-final'].forEach(id => document.getElementById(id).on('plotly_click', d => {
+  const cd = d.points[0].customdata; if (cd) select(cd[cd.length - 1]);
+}));
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { drawAll(); drawSky(0); });
+new MutationObserver(() => { drawAll(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+select('GW150914');
+
+/* ---------- hero animation (illustration) ---------- */
+const cv = document.getElementById('sky'), cx = cv.getContext('2d');
+const stars = Array.from({ length: 90 }, () => [Math.random(), Math.random(), Math.random() * 1.2 + 0.2]);
+const CYCLE = 6.5, MERGE = 4.6;
+function drawSky(time) {
+  const dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
+  if (cv.width !== W * dpr) { cv.width = W * dpr; cv.height = H * dpr; }
+  cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  cx.fillStyle = '#0b0e1d'; cx.fillRect(0, 0, W, H);
+  cx.fillStyle = 'rgba(233,234,244,0.55)';
+  stars.forEach(([x, y, r]) => { cx.beginPath(); cx.arc(x * W, y * H * 0.7, r, 0, 7); cx.fill(); });
+  const s = time % CYCLE, ox = W / 2, oy = H * 0.36, R0 = Math.min(W, H) * 0.2;
+  // separation shrinks as (1 - s/MERGE)^(1/4), the way real inspirals do; orbit speeds up as r^-1.5
+  const sep = s < MERGE ? R0 * Math.pow(1 - s / MERGE, 0.25) + 6 : 0;
+  const phase = s < MERGE ? -8 * Math.pow(1 - s / MERGE, 0.625) * 2 * Math.PI : 0;
+  // ripples
+  cx.strokeStyle = 'rgba(143,136,255,0.25)'; cx.lineWidth = 1;
+  for (let k = 1; k <= 4; k++) { const rr = ((time * 40 + k * 45) % 180) + 20; cx.beginPath(); cx.arc(ox, oy, rr * (W / 600), 0, 7); cx.stroke(); }
+  if (s < MERGE) {
+    [[1, 11], [-1, 9]].forEach(([sg, r]) => {
+      const x = ox + sg * sep * Math.cos(phase), y = oy + sg * sep * Math.sin(phase) * 0.45;
+      cx.beginPath(); cx.arc(x, y, r + 5, 0, 7); cx.fillStyle = 'rgba(143,136,255,0.35)'; cx.fill();
+      cx.beginPath(); cx.arc(x, y, r, 0, 7); cx.fillStyle = '#000'; cx.fill();
+    });
+  } else {
+    const glow = Math.max(0, 1 - (s - MERGE) / 1.2);
+    cx.beginPath(); cx.arc(ox, oy, 22 + 30 * glow, 0, 7); cx.fillStyle = `rgba(143,136,255,${0.15 + 0.4 * glow})`; cx.fill();
+    cx.beginPath(); cx.arc(ox, oy, 15, 0, 7); cx.fillStyle = '#000'; cx.fill();
+  }
+  // waveform trace along the bottom, drawn up to the current time
+  const y0 = H * 0.82, amp = H * 0.11, x0 = 16, x1 = W - 16;
+  cx.strokeStyle = '#2a2f55'; cx.beginPath(); cx.moveTo(x0, y0); cx.lineTo(x1, y0); cx.stroke();
+  cx.strokeStyle = '#a59dff'; cx.lineWidth = 1.6; cx.beginPath();
+  const tEnd = Math.min(s, CYCLE);
+  for (let px = 0; px <= x1 - x0; px++) {
+    const tt = (px / (x1 - x0)) * CYCLE; if (tt > tEnd) break;
+    let h;
+    if (tt < MERGE) { const u = 1 - tt / MERGE; h = Math.pow(u, -0.25) * 0.35 * Math.cos(-16 * Math.PI * Math.pow(u, 0.625)); h = Math.max(-1, Math.min(1, h)); }
+    else { h = Math.exp(-(tt - MERGE) * 9) * Math.cos((tt - MERGE) * 60); }
+    px === 0 ? cx.moveTo(x0 + px, y0 - h * amp) : cx.lineTo(x0 + px, y0 - h * amp);
+  }
+  cx.stroke();
+  cx.fillStyle = '#a9aec9'; cx.font = '11px "JetBrains Mono", monospace';
+  cx.fillText('signal at detector', x0, H - 8);
+}
+let t0 = null;
+function loop(now) { if (t0 == null) t0 = now; if (!document.hidden) drawSky((now - t0) / 1000); requestAnimationFrame(loop); }
+if (reduceMotion) drawSky(MERGE - 0.4); else requestAnimationFrame(loop);
+window.addEventListener('resize', () => { if (reduceMotion) drawSky(MERGE - 0.4); });
+
+/* ---------- chirp sound (illustration) ---------- */
+let actx = null;
+document.getElementById('chirp').addEventListener('click', () => {
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const now = actx.currentTime, osc = actx.createOscillator(), g = actx.createGain();
+    osc.type = 'sine'; osc.frequency.setValueAtTime(40, now);
+    osc.frequency.exponentialRampToValueAtTime(90, now + 0.9); osc.frequency.exponentialRampToValueAtTime(320, now + 1.15);
+    g.gain.setValueAtTime(0.0001, now); g.gain.exponentialRampToValueAtTime(0.25, now + 1.1); g.gain.exponentialRampToValueAtTime(0.0001, now + 1.3);
+    osc.connect(g).connect(actx.destination); osc.start(now); osc.stop(now + 1.35);
+  } catch (err) { document.getElementById('chirp').textContent = 'Sound unavailable here'; }
+});
+</script>
